@@ -18,6 +18,6 @@ public class FilmReleaseDateValidator implements ConstraintValidator<ValidFilmRe
         if (releaseDate == null) {
             return true;
         }
-        return !releaseDate.isBefore(MIN_RELEASE_DATE);
+        return releaseDate.isAfter(MIN_RELEASE_DATE);
     }
 }

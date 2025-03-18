@@ -21,5 +21,6 @@ public class Film {
     @ValidFilmReleaseDate
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
+    @NotNull(message = "Длительность не может быть пустой.")
     private Integer duration;
 }

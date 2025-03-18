@@ -1,65 +1,42 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
 
-    private final Map<Long, Film> films = new HashMap<>();
+    private final FilmService filmService;
 
     @GetMapping
     public ResponseEntity<List<Film>> findAll() {
         log.info("Запрос на получение всех фильмов");
-        return new ResponseEntity<>(new ArrayList<>(films.values()), HttpStatus.OK);
+        List<Film> films = filmService.findAll();
+        return new ResponseEntity<>(films, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         log.info("Запрос на создание фильма: {}", film);
-        try {
-            film.setId(getNextId());
-            films.put(film.getId(), film);
-            log.info("Создан фильм с id: {}", film.getId());
-            return new ResponseEntity<>(film, HttpStatus.CREATED);
-        } catch (Exception e) {
-            log.error("Произошла ошибка при создании фильма: {}", e.getMessage());
-            return new ResponseEntity<>(film, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Film createdFilm = filmService.createFilm(film);
+        return new ResponseEntity<>(createdFilm, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         log.info("Запрос на обновление фильма: {}", film);
-        try {
-            if (film.getId() == null || !films.containsKey(film.getId())) {
-                log.warn("Фильм с id {} не найден", film.getId());
-                return new ResponseEntity<>(film, HttpStatus.NOT_FOUND);
-            }
-
-            films.put(film.getId(), film);
-            log.info("Обновлен фильм: {}", film);
-            return new ResponseEntity<>(film, HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Произошла ошибка при обновлении фильма: {}", e.getMessage());
-            return new ResponseEntity<>(film, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+        Film updatedFilm = filmService.updateFilm(film);
+        return new ResponseEntity<>(updatedFilm, HttpStatus.OK);
     }
 }
