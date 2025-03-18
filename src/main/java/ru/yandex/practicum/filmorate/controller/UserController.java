@@ -25,24 +25,33 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         log.info("Запрос на создание пользователя: {}", user);
-
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.info("Создан пользователь с id: {}", user.getId());
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        try {
+            user.setId(getNextId());
+            users.put(user.getId(), user);
+            log.info("Создан пользователь с id: {}", user.getId());
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Произошла ошибка при создании пользователя: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
         log.info("Запрос на обновление пользователя: {}", user);
-        if (user.getId() == null || users.containsKey(user.getId())) {
-            log.warn("Пользователь с id {} не найден", user.getId());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        try {
+            if (user.getId() == null || !users.containsKey(user.getId())) {
+                log.warn("Пользователь с id {} не найден", user.getId());
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
-        users.put(user.getId(), user);
-        log.info("Пользователь обновлен: {}", user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+            users.put(user.getId(), user);
+            log.info("Пользователь обновлен: {}", user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Произошла ошибка при обновлении пользователя: {}", e.getMessage());
+            throw e;
+        }
     }
 
     private long getNextId() {

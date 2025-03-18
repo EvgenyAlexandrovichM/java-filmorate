@@ -25,24 +25,33 @@ public class FilmController {
     @PostMapping
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         log.info("Запрос на создание фильма: {}", film);
-
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Создан фильм с id: {}", film.getId());
-        return new ResponseEntity<>(film, HttpStatus.CREATED);
+        try {
+            film.setId(getNextId());
+            films.put(film.getId(), film);
+            log.info("Создан фильм с id: {}", film.getId());
+            return new ResponseEntity<>(film, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("Произошла ошибка при добавлении фильма: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @PutMapping
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         log.info("Запрос на обновление фильма: {}", film);
-        if (film.getId() == null || !films.containsKey(film.getId())) {
-            log.warn("Фильм с id {} не найден", film.getId());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        try {
+            if (film.getId() == null || !films.containsKey(film.getId())) {
+                log.warn("Фильм с id {} не найден", film.getId());
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
-        films.put(film.getId(), film);
-        log.info("Обновлен фильм: {}", film);
-        return new ResponseEntity<>(film, HttpStatus.OK);
+            films.put(film.getId(), film);
+            log.info("Обновлен фильм: {}", film);
+            return new ResponseEntity<>(film, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Произошла ошибка при обновлении фильма: {}", e.getMessage());
+            throw e;
+        }
     }
 
     private long getNextId() {

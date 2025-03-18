@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class ValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
