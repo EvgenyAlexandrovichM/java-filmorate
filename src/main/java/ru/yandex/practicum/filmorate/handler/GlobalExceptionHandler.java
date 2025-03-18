@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.handler;
+/*package ru.yandex.practicum.filmorate.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -22,4 +22,4 @@ public class GlobalExceptionHandler {
         result.put("message", e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-}
+} */

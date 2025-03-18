@@ -31,8 +31,8 @@ public class FilmController {
             log.info("Создан фильм с id: {}", film.getId());
             return new ResponseEntity<>(film, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error("Произошла ошибка при добавлении фильма: {}", e.getMessage());
-            throw e;
+            log.error("Произошла ошибка при создании фильма: {}", e.getMessage());
+            return new ResponseEntity<>(film, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -42,7 +42,7 @@ public class FilmController {
         try {
             if (film.getId() == null || !films.containsKey(film.getId())) {
                 log.warn("Фильм с id {} не найден", film.getId());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(film, HttpStatus.NOT_FOUND);
             }
 
             films.put(film.getId(), film);
@@ -50,7 +50,7 @@ public class FilmController {
             return new ResponseEntity<>(film, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Произошла ошибка при обновлении фильма: {}", e.getMessage());
-            throw e;
+            return new ResponseEntity<>(film, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

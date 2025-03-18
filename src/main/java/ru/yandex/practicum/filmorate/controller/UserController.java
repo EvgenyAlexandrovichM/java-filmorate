@@ -32,7 +32,7 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("Произошла ошибка при создании пользователя: {}", e.getMessage());
-            throw e;
+            return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -42,7 +42,7 @@ public class UserController {
         try {
             if (user.getId() == null || !users.containsKey(user.getId())) {
                 log.warn("Пользователь с id {} не найден", user.getId());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
             }
 
             users.put(user.getId(), user);
@@ -50,9 +50,10 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Произошла ошибка при обновлении пользователя: {}", e.getMessage());
-            throw e;
+            return new ResponseEntity<>(user, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     private long getNextId() {
         long currentMaxId = users.keySet()
