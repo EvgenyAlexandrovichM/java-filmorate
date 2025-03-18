@@ -26,6 +26,10 @@ public class UserController {
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         log.info("Запрос на создание пользователя: {}", user);
         try {
+            if (user.getName() == null || user.getName().isEmpty()) {
+                user.setName(user.getLogin());
+                log.info("Имя пользователя установлено по умолчанию: {}", user.getName());
+            }
             user.setId(getNextId());
             users.put(user.getId(), user);
             log.info("Создан пользователь с id: {}", user.getId());
