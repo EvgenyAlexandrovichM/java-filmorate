@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> update(@RequestBody User user) {
+    public ResponseEntity<User> update(@Valid @RequestBody User user) {
         log.info("Запрос на обновление пользователя: {}", user);
         if (user.getId() == null || users.containsKey(user.getId())) {
             log.warn("Пользователь с id {} не найден", user.getId());
