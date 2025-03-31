@@ -1,55 +1,74 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class FilmServiceImpl  implements FilmService {
+@RequiredArgsConstructor
+public class FilmServiceImpl implements FilmService {
 
-    private final Map<Long, Film> films = new HashMap<>();
-
-    @Override
-    public List<Film> findAll() {
-        log.info("Список всех фильмов");
-        return new ArrayList<>(films.values());
-    }
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Override
-    public Film createFilm(Film film) {
-        log.info("Создание фильма: {}", film);
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Фильм создан с id: {}", film.getId());
-        return film;
+    public void addLike(Long filmId, Long userId) {
+        log.info("Добавление лайка фильму с id {} от пользователя с id {}", filmId, userId);
+
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.getLikes().add(userId);
+        filmStorage.updateFilm(film);
+        log.info("Пользователь {} поставил лайк фильму {}", user, film);
     }
 
     @Override
-    public Film updateFilm(Film film) {
-        log.info("Обновление фильма: {}", film);
-        if (film.getId() == null || !films.containsKey(film.getId())) {
-            log.warn("Фильм с id {} не найден", film.getId());
-            throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
-        }
-        films.put(film.getId(), film);
-        log.info("Фильм {} обновлен", film);
-        return film;
+    public void deleteLike(Long filmId, Long userId) {
+        log.info("Удаление лайка фильму с id {} от пользователя с id {}", filmId, userId);
+
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.getLikes().remove(userId);
+        filmStorage.updateFilm(film);
+        log.info("Пользователь {} удалил лайк фильму {}", user, film);
     }
 
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @Override
+    public List<Film> findPopularFilms(int count) {
+        log.info("Получение топ 10 популярных фильмов по количеству лайков.");
+
+        return filmStorage.findAll().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
+
+    private Film getFilmOrThrow(Long id) {
+        return filmStorage.findFilmById(id)
+                .orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
+    }
+
+    private User getUserOrThrow(Long id) {
+        return userStorage.findUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
+    } /* дублированный метод из сервиса пользователей, который является приватным, но необходим здесь (найти вариант
+     как использовать этот метод, не добавляя сюда зависимость от пользовательского сервиса.
+     Возможно в реализацию пользовательского хранилища имеет смысл вынести этот метод, а в контракт добавить что-то
+     типа метода
+     boolean isFriend(Long id, Long friendId) {
+     User user = getUserOrThrow(userId);
+     return user.getFriends().contains(friendId); */
+    //TODO Junit на логику
 }

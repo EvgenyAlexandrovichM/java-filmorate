@@ -6,9 +6,16 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> findAll();
+    User addFriend(Long userId, Long friendId);
 
-    User createUser(User user);
+    User deleteFriend(Long userId, Long friendId);
 
-    User updateUser(User user);
+    List<User> getFriends(Long id);
+
+    List<User> findCommonFriends(Long id, Long otherUserId);
+    /*В сервисе фильмов я вынужден проверять Optional<Пользователь>,
+     но проверка - приватный метод имплементации интерфейса, которую выносить в контракт сомнительно, а добавлять
+     зависимость сервиса фильмов от сервиса пользователей кажется плохим решением.
+     Один из вариантов решения в FilmServiceImpl. */
+
 }
