@@ -42,9 +42,7 @@ public class ErrorHandler {
     }
 
     private ResponseEntity<ErrorResponse> createErrorResponse(List<String> errors, HttpStatus status) {
-        Map<String, List<String>> result = new HashMap<>();
-        result.put("errors", errors);
-        ErrorResponse response = new ErrorResponse(result);
+        ErrorResponse response = new ErrorResponse(errors);
         return new ResponseEntity<>(response, status);
     }
 }
