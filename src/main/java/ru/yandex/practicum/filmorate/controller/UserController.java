@@ -71,7 +71,7 @@ public class UserController {
         log.info("Запрос пользователя с id {} на удаление из друзей пользователя с id {}", id, friendId);
 
         User user = userService.deleteFriend(id, friendId);
-        log.info("Пользователь с id {} удалил из друзей пользователя с id {}", id , friendId);
+        log.info("Пользователь с id {} удалил из друзей пользователя с id {}", id, friendId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
