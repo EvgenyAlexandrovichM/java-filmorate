@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -84,11 +85,34 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public List<User> getAll() {
+        log.info("Получение всех пользователей");
+        return userStorage.findAll();
+    }
+
+    @Override
+    public User createUser(User user) {
+        log.info("Создание пользователя: {}", user);
+        return userStorage.createUser(user);
+    }
+
+    @Override
+    public User updateUser(User user) {
+        log.info("Обновление пользователя: {}", user);
+        return userStorage.updateUser(user);
+    }
+
+    @Override
+    public Optional<User> getUserById(Long id) {
+        log.info("Получение пользователя по id: {}", id);
+        return userStorage.findUserById(id);
+    }
+
     private User getUserOrThrow(Long id) {
         log.info("Поиск пользователя с id: {}", id);
         return userStorage.findUserById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
     }
-
     //TODO Junit на логику
 }

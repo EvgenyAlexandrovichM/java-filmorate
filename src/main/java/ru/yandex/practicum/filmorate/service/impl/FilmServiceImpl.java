@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,13 +47,33 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> findPopularFilms(int count) {
-        log.info("Получение топ 10 популярных фильмов по количеству лайков.");
+    public List<Film> getPopularFilms(int count) {
+        log.info("Получение топ {} популярных фильмов по количеству лайков.", count);
+        return filmStorage.findPopularFilms(count);
+    }
 
-        return filmStorage.findAll().stream()
-                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+    @Override
+    public List<Film> getAllFilms() {
+        log.info("Получение всех фильмов");
+        return filmStorage.findAll();
+    }
+
+    @Override
+    public Film createFilm(Film film) {
+        log.info("Создание фильма: {}", film);
+        return filmStorage.createFilm(film);
+    }
+
+    @Override
+    public Film updateFilm(Film film) {
+        log.info("Обновление фильма: {}", film);
+        return filmStorage.updateFilm(film);
+    }
+
+    @Override
+    public Optional<Film> getFilmById(Long id) {
+        log.info("Получение фильма по id: {}", id);
+        return filmStorage.findFilmById(id);
     }
 
     private Film getFilmOrThrow(Long id) {
@@ -63,12 +84,6 @@ public class FilmServiceImpl implements FilmService {
     private User getUserOrThrow(Long id) {
         return userStorage.findUserById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
-    } /* дублированный метод из сервиса пользователей, который является приватным, но необходим здесь (найти вариант
-     как использовать этот метод, не добавляя сюда зависимость от пользовательского сервиса.
-     Возможно в реализацию пользовательского хранилища имеет смысл вынести этот метод, а в контракт добавить что-то
-     типа метода
-     boolean isFriend(Long id, Long friendId) {
-     User user = getUserOrThrow(userId);
-     return user.getFriends().contains(friendId); */
+    }
     //TODO Junit на логику
 }

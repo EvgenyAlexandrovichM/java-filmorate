@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -44,6 +45,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Optional<Film> findFilmById(Long id) {
         return Optional.ofNullable(films.get(id));
+    }
+
+    @Override
+    public List<Film> findPopularFilms(int count) {
+        log.info("Получение топ {} популярных фильмов по количеству лайков.", count);
+        return films.values().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     private long getNextId() {
