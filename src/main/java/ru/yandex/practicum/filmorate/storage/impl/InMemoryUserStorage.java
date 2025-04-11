@@ -1,19 +1,16 @@
-package ru.yandex.practicum.filmorate.service.impl;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Service
+@Component
 @Slf4j
-public class UserServiceImp implements UserService {
+public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
 
@@ -44,6 +41,11 @@ public class UserServiceImp implements UserService {
         users.put(user.getId(), user);
         log.info("Пользователь {} обновлен", user);
         return user;
+    }
+
+    @Override
+    public Optional<User> findUserById(Long id) {
+        return Optional.ofNullable(users.get(id));
     }
 
     private void nameValidation(User user) {
