@@ -101,12 +101,17 @@ public class UserServiceImpl implements UserService {
         if (userStorage.findByEmail(user.getEmail()).isPresent()) {
             throw new DuplicatedDataException("Пользователь с таким email уже существует: " + user.getEmail());
         }
+
+        if (userStorage.findByLogin(user.getLogin()).isPresent()) {
+            throw new DuplicatedDataException("Пользователь с таким login уже существует: " + user.getLogin());
+        }
         return userStorage.createUser(user);
     }
 
     @Override
     public User updateUser(User user) {
         log.info("Обновление пользователя: {}", user);
+
         return userStorage.updateUser(user);
     }
 

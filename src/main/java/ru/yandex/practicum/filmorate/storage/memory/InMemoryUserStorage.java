@@ -73,6 +73,14 @@ public class InMemoryUserStorage implements UserStorage {
                 .findFirst();
     }
 
+    @Override
+    public Optional<User> findByLogin(String login) {
+        return users.values()
+                .stream()
+                .filter(user -> user.getLogin().equals(login))
+                .findFirst();
+    }
+
     private void nameValidation(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());

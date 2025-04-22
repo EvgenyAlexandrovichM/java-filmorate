@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +18,12 @@ import java.util.Optional;
 @Qualifier("userDbStorage")
 public class UserDbStorage extends AbstractDbStorage<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?";
     private static final String INSERT_QUERY = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?";
-    private static final String DELETE_QUERY = "DELETE FROM users WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM users WHERE user_id = ?";
     private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
+    private static final String FIND_BY_LOGIN_QUERY = "SELECT * FROM users WHERE login = ?";
 
     public UserDbStorage(JdbcTemplate jdbcTemplate, RowMapper<User> mapper) {
         super(jdbcTemplate, mapper);
@@ -70,5 +73,10 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     @Override
     public Optional<User> findByEmail(String email) {
         return findOne(FIND_BY_EMAIL_QUERY, email);
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        return findOne(FIND_BY_LOGIN_QUERY, login);
     }
 }

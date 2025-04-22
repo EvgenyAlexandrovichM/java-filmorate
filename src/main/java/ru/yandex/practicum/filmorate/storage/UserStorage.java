@@ -20,4 +20,6 @@ public interface UserStorage {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByLogin(String login);
+
 }

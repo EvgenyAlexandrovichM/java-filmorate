@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,10 +10,12 @@ import ru.yandex.practicum.filmorate.exception.InternalServerException;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Slf4j
 public abstract class AbstractDbStorage<T> {
     protected final JdbcTemplate jdbcTemplate;
     protected final RowMapper<T> mapper;
@@ -31,6 +34,7 @@ public abstract class AbstractDbStorage<T> {
     }
 
     protected void update(String query, Object... params) {
+        log.info("Выполнение запроса: {}, параметры: {}", query, Arrays.toString(params));
         int rowsUpdated = jdbcTemplate.update(query, params);
         if (rowsUpdated == 0) {
             throw new InternalServerException("Не удалось обновить данные.");
@@ -38,6 +42,7 @@ public abstract class AbstractDbStorage<T> {
     }
 
     protected long insert(String query, Object... params) {
+        log.info("Выполнение запроса: {}, параметры: {}", query, Arrays.toString(params));
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> {
             PreparedStatement ps = conn

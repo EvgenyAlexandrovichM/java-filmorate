@@ -33,20 +33,20 @@ public class ErrorHandler {
         return createErrorResponse(errors, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DuplicatedDataException.class)
+    public ResponseEntity<?> handleDuplicatedDataException(DuplicatedDataException e) {
+        log.warn("Ошибка дублирования данных: {}", e.getMessage());
+        List<String> errors = new ArrayList<>();
+        errors.add("Пользователь с таким логином или email уже существует.");
+        return createErrorResponse(errors, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleOtherException(Exception e) {
         log.error("Произошла непредвиденная ошибка: {}", e.getMessage(), e);
         List<String> errors = new ArrayList<>();
         errors.add("Произошла непредвиденная ошибка: " + e.getMessage());
         return createErrorResponse(errors, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(DuplicatedDataException.class)
-    public ResponseEntity<?> handleDuplicatedDataException(DuplicatedDataException e) {
-        log.warn("Ошибка дублирования данных: {}", e.getMessage());
-        List<String> errors = new ArrayList<>();
-        errors.add(e.getMessage());
-        return createErrorResponse(errors, HttpStatus.BAD_REQUEST);
     }
 
 
