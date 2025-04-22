@@ -20,12 +20,12 @@ public class MpaRatingDbStorage extends AbstractDbStorage<MpaRating> implements 
     }
 
     @Override
-    public List<MpaRating> findAll() {
+    public List<MpaRating> findAllMpaRatings() {
         return findMany(FIND_ALL_MPA_RATINGS_QUERY);
     }
 
     @Override
-    public Optional<MpaRating> findById(int id) {
+    public Optional<MpaRating> findMpaRatingById(int id) {
         return findOne(FIND_MPA_RATING_BY_ID_QUERY, id);
     }
 }

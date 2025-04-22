@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -91,12 +92,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         log.info("Получение всех пользователей");
-        return userStorage.findAll();
+        return userStorage.findAllUsers();
     }
 
     @Override
     public User createUser(User user) {
         log.info("Создание пользователя: {}", user);
+        if (userStorage.findByEmail(user.getEmail()).isPresent()) {
+            throw new DuplicatedDataException("Пользователь с таким email уже существует: " + user.getEmail());
+        }
         return userStorage.createUser(user);
     }
 

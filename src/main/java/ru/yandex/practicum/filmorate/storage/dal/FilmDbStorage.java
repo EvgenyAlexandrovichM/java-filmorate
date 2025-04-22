@@ -34,7 +34,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     }
 
     @Override
-    public List<Film> findAll() {
+    public List<Film> findAllFilms() {
         return findMany(FIND_ALL_QUERY);
     }
 

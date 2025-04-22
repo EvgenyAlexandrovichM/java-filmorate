@@ -18,7 +18,7 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAllUsers() {
         log.info("Список всех пользователей");
         return new ArrayList<>(users.values());
     }
@@ -63,6 +63,14 @@ public class InMemoryUserStorage implements UserStorage {
         }
         users.remove(id);
         log.info("Пользователь с ID: {} удален", id);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return users.values()
+                .stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst();
     }
 
     private void nameValidation(User user) {

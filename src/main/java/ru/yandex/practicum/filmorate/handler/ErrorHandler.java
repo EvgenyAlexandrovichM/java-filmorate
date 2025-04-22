@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
 import java.util.ArrayList;
@@ -39,6 +40,15 @@ public class ErrorHandler {
         errors.add("Произошла непредвиденная ошибка: " + e.getMessage());
         return createErrorResponse(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(DuplicatedDataException.class)
+    public ResponseEntity<?> handleDuplicatedDataException(DuplicatedDataException e) {
+        log.warn("Ошибка дублирования данных: {}", e.getMessage());
+        List<String> errors = new ArrayList<>();
+        errors.add(e.getMessage());
+        return createErrorResponse(errors, HttpStatus.BAD_REQUEST);
+    }
+
 
     private ResponseEntity<ErrorResponse> createErrorResponse(List<String> errors, HttpStatus status) {
         ErrorResponse response = new ErrorResponse(errors);

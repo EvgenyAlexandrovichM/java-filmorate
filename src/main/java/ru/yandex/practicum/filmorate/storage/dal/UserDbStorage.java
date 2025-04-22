@@ -20,13 +20,14 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     private static final String INSERT_QUERY = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM users WHERE id = ?";
+    private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
 
     public UserDbStorage(JdbcTemplate jdbcTemplate, RowMapper<User> mapper) {
         super(jdbcTemplate, mapper);
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAllUsers() {
         return findMany(FIND_ALL_QUERY);
     }
 
@@ -64,5 +65,10 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     @Override
     public void deleteUser(Long id) {
         update(DELETE_QUERY, id);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return findOne(FIND_BY_EMAIL_QUERY, email);
     }
 }

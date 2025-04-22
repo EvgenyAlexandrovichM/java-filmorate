@@ -45,7 +45,8 @@ public abstract class AbstractDbStorage<T> {
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
-            return ps;}, keyHolder);
+            return ps;
+        }, keyHolder);
         Long id = keyHolder.getKeyAs(Long.class);
 
         if (id != null) {

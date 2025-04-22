@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserStorage {
 
-    List<User> findAll();
+    List<User> findAllUsers();
 
     User createUser(User user);
 
@@ -17,5 +17,7 @@ public interface UserStorage {
     Optional<User> findUserById(Long id);
 
     void deleteUser(Long id);
+
+    Optional<User> findByEmail(String email);
 
 }

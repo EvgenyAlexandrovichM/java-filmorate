@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.dto.MpaRatingDto;
 import ru.yandex.practicum.filmorate.dto.mappers.MpaRatingMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.MpaRating;
-import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
+import ru.yandex.practicum.filmorate.service.MpaService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MpaRatingController {
 
-    private final MpaRatingStorage mpaRatingStorage;
+    private final MpaService mpaService;
 
     @GetMapping
     public ResponseEntity<List<MpaRatingDto>> getAllMpaRatings() {
         log.info("Запрос на получение всех рейтингов МРА.");
 
-        List<MpaRatingDto> mpaRatings = mpaRatingStorage.findAll()
+        List<MpaRatingDto> mpaRatings = mpaService.getAllMpaRatings()
                 .stream()
                 .map(MpaRatingMapper::mapToMpaRatingDto)
                 .collect(Collectors.toList());
@@ -40,7 +40,7 @@ public class MpaRatingController {
     public ResponseEntity<MpaRatingDto> getMpaRatingById(@PathVariable Integer id) {
         log.info("Запрос на получение рейтинга МРА по ID: {}", id);
 
-        MpaRating mpaRating = mpaRatingStorage.findById(id)
+        MpaRating mpaRating = mpaService.getMpaRatingById(id)
                 .orElseThrow(() -> new NotFoundException("Рейтинг МРА с id " + id + " не найден."));
         log.info("Рейтинг МРА с ID: {} найден.", id);
         return new ResponseEntity<>(MpaRatingMapper.mapToMpaRatingDto(mpaRating), HttpStatus.OK);

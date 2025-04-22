@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface FilmStorage {
 
-    List<Film> findAll();
+    List<Film> findAllFilms();
 
     Film createFilm(Film film);
 

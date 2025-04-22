@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.dto.GenreDto;
 import ru.yandex.practicum.filmorate.dto.mappers.GenreMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Genre;
-import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.service.GenreService;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,13 +24,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GenreController {
 
-    private final GenreStorage genreStorage;
+    private final GenreService genreService;
 
     @GetMapping
     public ResponseEntity<List<GenreDto>> getAllGenres() {
         log.info("Запрос на получение всех жанров.");
 
-        List<GenreDto> genres = genreStorage.findAll()
+        List<GenreDto> genres = genreService.getAllGenres()
                 .stream()
                 .map(GenreMapper::mapToGenreDto)
                 .collect(Collectors.toList());
@@ -40,7 +41,7 @@ public class GenreController {
     public ResponseEntity<GenreDto> getGenreById(@PathVariable Integer id) {
         log.info("Запрос на получение жанра по ID: {}", id);
 
-        Genre genre = genreStorage.findById(id)
+        Genre genre = genreService.getGenreById(id)
                 .orElseThrow(() -> new NotFoundException("Жанр с id " + id + " не найден."));
         log.info("Жанр с ID: {} найден", id);
         return new ResponseEntity<>(GenreMapper.mapToGenreDto(genre), HttpStatus.OK);

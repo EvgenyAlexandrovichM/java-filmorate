@@ -24,12 +24,12 @@ public class GenreDbStorage extends AbstractDbStorage<Genre> implements GenreSto
     }
 
     @Override
-    public List<Genre> findAll() {
+    public List<Genre> findAllGenres() {
         return findMany(FIND_ALL_GENRES_QUERY);
     }
 
     @Override
-    public Optional<Genre> findById(int id) {
+    public Optional<Genre> findGenreById(int id) {
        return findOne(FIND_GENRE_BY_ID_QUERY, id);
     }
 

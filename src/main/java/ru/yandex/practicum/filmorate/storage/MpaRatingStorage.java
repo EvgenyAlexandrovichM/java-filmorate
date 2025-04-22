@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface MpaRatingStorage {
 
-    List<MpaRating> findAll();
+    List<MpaRating> findAllMpaRatings();
 
-    Optional<MpaRating> findById(int id);
+    Optional<MpaRating> findMpaRatingById(int id);
 
 }

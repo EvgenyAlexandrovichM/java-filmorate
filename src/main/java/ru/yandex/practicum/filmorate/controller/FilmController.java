@@ -27,7 +27,7 @@ public class FilmController {
     public ResponseEntity<List<FilmDto>> getAll() {
         log.info("Запрос на получение всех фильмов");
 
-        List<FilmDto> films = filmService.getAllFilms()
+        List<FilmDto> films = filmService.getAll()
                 .stream()
                 .map(FilmMapper::mapToFilmDto)
                 .collect(Collectors.toList());
