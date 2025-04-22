@@ -42,7 +42,6 @@ public abstract class AbstractDbStorage<T> {
     }
 
     protected long insert(String query, Object... params) {
-        log.info("Выполнение запроса: {}, параметры: {}", query, Arrays.toString(params));
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(conn -> {
             PreparedStatement ps = conn

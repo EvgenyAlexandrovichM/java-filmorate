@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
@@ -31,6 +32,13 @@ public class ErrorHandler {
         List<String> errors = new ArrayList<>();
         errors.add("Не найдено: " + e.getMessage());
         return createErrorResponse(errors, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequestException(BadRequestException e) {
+        log.warn("Некорректный запрос: {}", e.getMessage());
+        List<String> errors = new ArrayList<>();
+        return createErrorResponse(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicatedDataException.class)

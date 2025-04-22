@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
@@ -111,7 +112,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         log.info("Обновление пользователя: {}", user);
-
+        if (user.getId() == null) {
+            throw new BadRequestException("ID обязателен для обновления.");
+        }
         return userStorage.updateUser(user);
     }
 

@@ -8,9 +8,8 @@ import java.util.Set;
 
 @Data
 public class FilmDto {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
 
+    private Long id;
     private String title;
     private String description;
     private LocalDate releaseDate;

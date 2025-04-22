@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class GenreDto {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private Integer genreId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private String name;
 
 }

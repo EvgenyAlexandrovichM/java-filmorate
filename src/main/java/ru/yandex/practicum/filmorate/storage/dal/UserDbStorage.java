@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
 
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +49,15 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
 
     @Override
     public User updateUser(User user) {
+        Optional<User> existingUser = findUserById(user.getId());
+        if (existingUser.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + user.getId() + " не найден");
+        }
+
+        if (user.getEmail() == null || user.getLogin() == null || user.getId() == null) {
+            throw new BadRequestException("Некорректные данные для обновления.");
+        }
+
         update(
                 UPDATE_QUERY,
                 user.getEmail(),

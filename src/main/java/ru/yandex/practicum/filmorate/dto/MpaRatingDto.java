@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class MpaRatingDto {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private Integer mpaRatingId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private String name;
 }
