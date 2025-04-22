@@ -34,7 +34,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User updateUser(User user) {
         log.info("Обновление пользователя: {}", user);
         if (user.getId() == null || !users.containsKey(user.getId())) {
-            log.warn("Пользователь с id {} не найден", user.getId());
+            log.warn("Пользователь с ID {} не найден", user.getId());
             throw new NotFoundException("Пользователь с id " + user.getId() + " не найден");
         }
         nameValidation(user);
@@ -46,6 +46,20 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public Optional<User> findUserById(Long id) {
         return Optional.ofNullable(users.get(id));
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        log.info("Удаление пользователя c ID: {}", id);
+        if (id == null || !users.containsKey(id)) {
+            log.warn("Пользователя с ID {} не существует", id);
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
+        for (User user : users.values()) {
+            user.getFriends().remove(id);
+        }
+        users.remove(id);
+        log.info("Пользователь с ID: {} удален", id);
     }
 
     private void nameValidation(User user) {

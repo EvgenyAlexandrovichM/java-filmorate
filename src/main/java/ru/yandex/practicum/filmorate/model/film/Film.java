@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.model.film.enums.Genre;
-import ru.yandex.practicum.filmorate.model.film.enums.MpaRating;
 import ru.yandex.practicum.filmorate.validators.ValidFilmReleaseDate;
 
 
@@ -34,7 +32,7 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genre = new HashSet<>();
 
     private MpaRating mpaRating;
 
