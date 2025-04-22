@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dal.mappers;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.model.film.MpaRating;
@@ -8,11 +9,10 @@ import ru.yandex.practicum.filmorate.model.film.MpaRating;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+@Component
 public class FilmRawMapper implements RowMapper<Film> {
 
     //Почитал на форумах, что принято делать интерфейсами для гибкости с дефолтным методом, пока оставляю классом)

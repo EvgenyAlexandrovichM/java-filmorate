@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Qualifier("userDbStorage")
 public class UserDbStorage extends AbstractDbStorage<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?";
