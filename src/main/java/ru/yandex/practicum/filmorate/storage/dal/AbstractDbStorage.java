@@ -59,4 +59,10 @@ public abstract class AbstractDbStorage<T> {
             throw new InternalServerException("Не удалось сохранить данные.");
         }
     }
+
+    //т.к. тесты в постмане требуют выдавать 200/204 ответ даже если нет друзей, метод update не подходит,
+    // он выбрасывает исключение ошибки сервера, делаю такой костыль)
+    protected void updateIgnoreResult(String query, Object... params) {
+        jdbcTemplate.update(query,params);
+    }
 }

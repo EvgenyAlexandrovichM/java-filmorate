@@ -77,7 +77,7 @@ public class UserController {
     public ResponseEntity<UserDto> deleteFriend(@PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
         log.info("Запрос пользователя с id {} на удаление из друзей пользователя с id {}", id, friendId);
 
-        User user = userService.deleteFriend(id, friendId);
+        User user = userService.removeFriend(id, friendId);
         log.info("Пользователь с id {} удалил из друзей пользователя с id {}", id, friendId);
         return new ResponseEntity<>(UserMapper.mapToUserDto(user), HttpStatus.OK);
     }
@@ -86,7 +86,7 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
         log.info("Запрос на получение общих друзей у пользователей с id {} и {}", id, otherId);
 
-        List<UserDto> commonFriends = userService.findCommonFriends(id, otherId)
+        List<UserDto> commonFriends = userService.getCommonFriends(id, otherId)
                 .stream()
                 .map(UserMapper::mapToUserDto)
                 .collect(Collectors.toList());

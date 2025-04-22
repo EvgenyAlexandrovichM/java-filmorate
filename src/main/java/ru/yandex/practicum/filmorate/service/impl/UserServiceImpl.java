@@ -10,11 +10,8 @@ import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -29,65 +26,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addFriend(Long userId, Long friendId) {
-        log.info("Добавление в друзья пользователей: {}, {}", userId, friendId);
-
-        User user = getUserOrThrow(userId);
-        User friend = getUserOrThrow(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-
-        userStorage.updateUser(user);
-        userStorage.updateUser(friend);
-        log.info("Пользователи {} и {} теперь друзья", user, friend);
-
-        return user;
+        log.info("Удаление из друзей пользователя {}, {}", userId, friendId);
+        return userStorage.addFriend(userId, friendId);
     }
 
     @Override
-    public User deleteFriend(Long userId, Long friendId) {
+    public User removeFriend(Long userId, Long friendId) {
         log.info("Удаление из друзей пользователей {}, {}", userId, friendId);
-
-        User user = getUserOrThrow(userId);
-        User friend = getUserOrThrow(friendId);
-
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
-
-        userStorage.updateUser(user);
-        userStorage.updateUser(friend);
-        log.info("Пользователи {} и {} теперь не друзья", user, friend);
-
-        return user;
+        return userStorage.removeFriend(userId, friendId);
     }
 
     @Override
     public List<User> getFriends(Long id) {
         log.info("Получение списка друзей пользователя с id: {}", id);
-
         User user = getUserOrThrow(id);
-        log.debug("Пользователь с id {} найден: {}", id, user);
-
-        List<Long> friendsId = new ArrayList<>(user.getFriends());
-        return friendsId.stream()
-                .map(this::getUserOrThrow)
-                .collect(Collectors.toList());
+        List<User> friends = userStorage.findFriends(id);
+        if (friends.isEmpty()) {
+            log.info("У пользователя с id {} пока нет друзей", id);
+        }
+        return userStorage.findFriends(id);
     }
 
     @Override
-    public List<User> findCommonFriends(Long userId, Long otherUserId) {
+    public List<User> getCommonFriends(Long userId, Long otherUserId) {
         log.info("Получение списка друзей пользователя: {}", userId);
-        User user = getUserOrThrow(userId);
-        User otherUser = getUserOrThrow(otherUserId);
-
-        Set<Long> userFriends = user.getFriends();
-        Set<Long> otherUserFriends = otherUser.getFriends();
-
-        return userFriends.stream()
-                .filter(otherUserFriends::contains)
-                .map(this::getUserOrThrow)
-                .collect(Collectors.toList());
-
+        return userStorage.findCommonFriends(userId, otherUserId);
     }
 
     @Override

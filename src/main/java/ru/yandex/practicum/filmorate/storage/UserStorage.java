@@ -16,10 +16,18 @@ public interface UserStorage {
 
     Optional<User> findUserById(Long id);
 
-    void deleteUser(Long id);
+    void removeUser(Long id);
 
     Optional<User> findByEmail(String email);
 
     Optional<User> findByLogin(String login);
+
+    User addFriend(Long userId, Long friendId);
+
+    User removeFriend(Long userId, Long friendId);
+
+    List<User> findFriends(Long id);
+
+    List<User> findCommonFriends(Long userId, Long otherUserId);
 
 }

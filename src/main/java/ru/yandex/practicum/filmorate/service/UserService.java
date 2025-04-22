@@ -9,11 +9,11 @@ public interface UserService {
 
     User addFriend(Long userId, Long friendId);
 
-    User deleteFriend(Long userId, Long friendId);
+    User removeFriend(Long userId, Long friendId);
 
     List<User> getFriends(Long id);
 
-    List<User> findCommonFriends(Long id, Long otherUserId);
+    List<User> getCommonFriends(Long userId, Long otherUserId);
 
     List<User> getAll();
 
