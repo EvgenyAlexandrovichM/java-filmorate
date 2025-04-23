@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,16 +19,13 @@ import java.util.Optional;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
     private final MpaRatingStorage mpaRatingStorage;
     private final GenreStorage genreStorage;
 
     public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage,
-                           @Qualifier("userDbStorage") UserStorage userStorage,
                            MpaRatingStorage mpaRatingStorage,
                            GenreStorage genreStorage) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
         this.mpaRatingStorage = mpaRatingStorage;
         this.genreStorage = genreStorage;
     }
@@ -80,7 +76,7 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.findFilmById(id);
     }
 
-     private void getFilmOrThrow(Film film) {
+    private void getFilmOrThrow(Film film) {
         if (mpaRatingStorage.findMpaRatingById(film.getMpaRating().getMpaRatingId()).isEmpty()) {
             throw new NotFoundException("МРА рейтинг с id " + film.getMpaRating().getMpaRatingId() + " не найден.");
         }
