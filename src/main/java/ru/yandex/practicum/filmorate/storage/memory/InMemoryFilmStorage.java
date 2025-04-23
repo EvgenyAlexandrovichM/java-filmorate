@@ -5,11 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -21,16 +18,10 @@ import java.util.stream.Collectors;
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final UserStorage userStorage;
-    private final MpaRatingStorage mpaRatingStorage;
-    private final GenreStorage genreStorage;
     private final Map<Long, Film> films = new HashMap<>();
 
-    public InMemoryFilmStorage(@Qualifier("inMemoryUserStorage") UserStorage userStorage,
-                               MpaRatingStorage mpaRatingStorage,
-                               GenreStorage genreStorage) {
+    public InMemoryFilmStorage(@Qualifier("inMemoryUserStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.mpaRatingStorage = mpaRatingStorage;
-        this.genreStorage = genreStorage;
     }
 
     @Override
