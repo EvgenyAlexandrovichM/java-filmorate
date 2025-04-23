@@ -38,25 +38,15 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void addLike(Long filmId, Long userId) {
         log.info("Добавление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-
-        Film film = getFilmOrThrow(filmId);
-        User user = getUserOrThrow(userId);
-
-        film.getLikes().add(userId);
-        filmStorage.updateFilm(film);
-        log.info("Пользователь {} поставил лайк фильму {}", user, film);
+        filmStorage.addLike(filmId, userId);
+        log.info("Пользователь c id {} поставил лайк фильму c id {}", userId, filmId);
     }
 
     @Override
     public void deleteLike(Long filmId, Long userId) {
         log.info("Удаление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-
-        Film film = getFilmOrThrow(filmId);
-        User user = getUserOrThrow(userId);
-
-        film.getLikes().remove(userId);
-        filmStorage.updateFilm(film);
-        log.info("Пользователь {} удалил лайк фильму {}", user, film);
+        filmStorage.deleteLike(filmId, userId);
+        log.info("Пользователь с id {} удалил лайк с id фильму {}", userId, filmId);
     }
 
     @Override
@@ -91,16 +81,6 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.findFilmById(id);
     }
 
-    private Film getFilmOrThrow(Long id) {
-        return filmStorage.findFilmById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
-    }
-
-    private User getUserOrThrow(Long id) {
-        return userStorage.findUserById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
-    }
-
      private void getFilmOrThrow(Film film) {
         if (mpaRatingStorage.findMpaRatingById(film.getMpaRating().getMpaRatingId()).isEmpty()) {
             throw new NotFoundException("МРА рейтинг с id " + film.getMpaRating().getMpaRatingId() + " не найден.");
@@ -112,6 +92,5 @@ public class FilmServiceImpl implements FilmService {
                 }
             }
         }
-    }
-    //TODO Junit на логику
+    }//TODO Junit на логику
 }

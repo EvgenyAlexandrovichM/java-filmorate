@@ -17,22 +17,22 @@ import java.util.Optional;
 @Qualifier("filmDbStorage")
 public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorage {
 
-    private static final String FIND_ALL_QUERY = "SELECT f.*, m.name AS mpa_name " +
+    private static final String FIND_ALL_FILM_QUERY = "SELECT f.*, m.name AS mpa_name " +
             "FROM films f " +
             "JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id";
 
-    private static final String FIND_BY_ID_QUERY = "SELECT f.*, m.name AS mpa_name " +
+    private static final String FIND_FILM_BY_ID_QUERY = "SELECT f.*, m.name AS mpa_name " +
             "FROM films f " +
             "JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id " +
             "WHERE f.film_id = ?";
 
-    private static final String INSERT_QUERY = "INSERT INTO films" +
+    private static final String INSERT_FILM_QUERY = "INSERT INTO films" +
             "(name, description, release_date, duration, mpa_rating_id) VALUES (?, ?, ?, ?, ?)";
 
-    private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, release_date = ?," +
+    private static final String UPDATE_FILM_QUERY = "UPDATE films SET name = ?, description = ?, release_date = ?," +
             "duration = ?, mpa_rating_id = ? WHERE film_id = ?";
 
-    private static final String DELETE_QUERY = "DELETE FROM films WHERE film_id = ?";
+    private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE film_id = ?";
 
     private static final String FIND_POPULAR_FILMS_QUERY = "SELECT f.*, m.name AS mpa_name, " +
             "COUNT(l.user_id) AS like_count " +
@@ -50,6 +50,10 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
             "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
             "WHERE fg.film_id = ?";
 
+    private static final String INSERT_LIKE_QUERY = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
+
+    private static final String DELETE_LIKE_QUERY = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
+
     private final RowMapper<Genre> genreRowMapper;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate, RowMapper<Film> filmRowMapper, RowMapper<Genre> genreRowMapper) {
@@ -59,13 +63,13 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public List<Film> findAllFilms() {
-        return findMany(FIND_ALL_QUERY);
+        return findMany(FIND_ALL_FILM_QUERY);
     }
 
     @Override
     public Film createFilm(Film film) {
         long filmId = insert(
-                INSERT_QUERY,
+                INSERT_FILM_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -86,7 +90,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     @Override
     public Film updateFilm(Film film) {
         update(
-                UPDATE_QUERY,
+                UPDATE_FILM_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -99,7 +103,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public Optional<Film> findFilmById(Long id) {
-        Optional<Film> optionalFilm = findOne(FIND_BY_ID_QUERY, id);
+        Optional<Film> optionalFilm = findOne(FIND_FILM_BY_ID_QUERY, id);
         if (optionalFilm.isPresent()) {
             Film film = optionalFilm.get();
 
@@ -117,6 +121,16 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public void removeFilm(Long id) {
-        update(DELETE_QUERY, id);
+        update(DELETE_FILM_QUERY, id);
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        update(INSERT_LIKE_QUERY, filmId, userId);
+    }
+
+    @Override
+    public void deleteLike(Long filmId, Long userId) {
+        update(DELETE_LIKE_QUERY, filmId, userId);
     }
 }

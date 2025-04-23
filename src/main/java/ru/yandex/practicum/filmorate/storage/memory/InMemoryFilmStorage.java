@@ -5,7 +5,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +20,18 @@ import java.util.stream.Collectors;
 @Qualifier("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
+    private final UserStorage userStorage;
+    private final MpaRatingStorage mpaRatingStorage;
+    private final GenreStorage genreStorage;
     private final Map<Long, Film> films = new HashMap<>();
+
+    public InMemoryFilmStorage(@Qualifier("inMemoryUserStorage") UserStorage userStorage,
+                               MpaRatingStorage mpaRatingStorage,
+                               GenreStorage genreStorage) {
+        this.userStorage = userStorage;
+        this.mpaRatingStorage = mpaRatingStorage;
+        this.genreStorage = genreStorage;
+    }
 
     @Override
     public List<Film> findAllFilms() {
@@ -69,6 +85,30 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Фильм с ID {} удален", id);
     }
 
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        log.info("Добавление лайка фильму с id {} от пользователя с id {}", filmId, userId);
+
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.getLikes().add(userId);
+        updateFilm(film);
+        log.info("Пользователь {} поставил лайк фильму {}", user, film);
+    }
+
+    @Override
+    public void deleteLike(Long filmId, Long userId) {
+        log.info("Удаление лайка фильму с id {} от пользователя с id {}", filmId, userId);
+
+        Film film = getFilmOrThrow(filmId);
+        User user = getUserOrThrow(userId);
+
+        film.getLikes().remove(userId);
+        updateFilm(film);
+        log.info("Пользователь {} удалил лайк фильму {}", user, film);
+    }
+
     private long getNextId() {
         long currentMaxId = films.keySet()
                 .stream()
@@ -76,5 +116,15 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    private Film getFilmOrThrow(Long id) {
+        return findFilmById(id)
+                .orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
+    }
+
+    private User getUserOrThrow(Long id) {
+        return userStorage.findUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
     }
 }
