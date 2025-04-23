@@ -13,11 +13,14 @@ import java.util.List;
 public class FriendshipDbStorage extends AbstractDbStorage<User> implements FriendStorage {
 
     private static final String ADD_FRIEND_QUERY = "INSERT INTO friendships (user_id, friend_id) VALUES (?, ?)";
+
     private static final String DELETE_FRIEND_QUERY = "DELETE FROM friendships WHERE user_id = ? AND friend_id = ?";
+
     private static final String GET_FRIENDS_QUERY =
             "SELECT u.* FROM users u" +
                     "JOIN friendships f ON u.user_id = f.friend_id" +
                     "WHERE f.user_id = ?";
+
     private static final String FIND_COMMON_FRIENDS_QUERY =
             "SELECT u.* FROM users u" +
                     "JOIN friendships f1 ON u.user_id = f1.friend_id" +
@@ -41,7 +44,7 @@ public class FriendshipDbStorage extends AbstractDbStorage<User> implements Frie
     }
 
     @Override
-    public List<User> getFriends(Long userId) {
+    public List<User> findFriends(Long userId) {
         return findMany(GET_FRIENDS_QUERY, userId);
     }
 

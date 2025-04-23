@@ -43,7 +43,7 @@ class FilmControllerTest {
     @Test
     void testCreateFilmWithLongDescription() throws Exception {
         Film film = new Film();
-        film.setTitle("Name");
+        film.setName("Name");
         film.setDescription("Это очень длинное описание, которое превышает лимит в 200 символов, на которое у меня не" +
                 "хватает воображения что-то придумать, поэтому я просто печатаю пасту, которая мне буквально придумывается" +
                 "на ходу, ну что поделать, слова заканчиваются, возможно, мне придется ктрл с + ктрл  в ещё раз эту же" +
@@ -62,7 +62,7 @@ class FilmControllerTest {
     @Test
     void testCreateFilmWithNegativeDuration() throws Exception {
         Film film = new Film();
-        film.setTitle("Name");
+        film.setName("Name");
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2023, 10, 26));
         film.setDuration(-10);
@@ -79,7 +79,7 @@ class FilmControllerTest {
     @Test
     void testCreateFilmWithZeroDuration() throws Exception {
         Film film = new Film();
-        film.setTitle("Name");
+        film.setName("Name");
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2023, 10, 26));
         film.setDuration(0);
@@ -96,7 +96,7 @@ class FilmControllerTest {
     @Test
     void testCreateFilmWithInvalidReleaseDate() throws Exception {
         Film film = new Film();
-        film.setTitle("Name");
+        film.setName("Name");
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(1895, 12, 27));
         film.setDuration(120);
@@ -113,7 +113,7 @@ class FilmControllerTest {
     @Test
     void testCreateFilmWithValidData() throws Exception {
         Film film = new Film();
-        film.setTitle("Name");
+        film.setName("Name");
         film.setDescription("Description");
         film.setReleaseDate(LocalDate.of(2023, 10, 26));
         film.setDuration(120);

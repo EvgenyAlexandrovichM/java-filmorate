@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.dto.GenreDto;
 import ru.yandex.practicum.filmorate.dto.mappers.GenreMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.film.Genre;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 
@@ -38,7 +38,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GenreDto> getGenreById(@PathVariable Integer id) {
+    public ResponseEntity<GenreDto> getGenreById(@PathVariable int id) {
         log.info("Запрос на получение жанра по ID: {}", id);
 
         Genre genre = genreService.getGenreById(id)

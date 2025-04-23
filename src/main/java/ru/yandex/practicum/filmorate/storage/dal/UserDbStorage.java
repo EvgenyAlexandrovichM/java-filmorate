@@ -20,17 +20,28 @@ import java.util.Optional;
 @Slf4j
 public class UserDbStorage extends AbstractDbStorage<User> implements UserStorage {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
+
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE user_id = ?";
+
     private static final String INSERT_QUERY = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
+
+    private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? " +
+            "WHERE user_id = ?";
+
     private static final String DELETE_QUERY = "DELETE FROM users WHERE user_id = ?";
+
     private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?";
+
     private static final String FIND_BY_LOGIN_QUERY = "SELECT * FROM users WHERE login = ?";
+
     private static final String ADD_FRIEND_QUERY = "INSERT INTO friendships(user_id, friend_id) VALUES (?, ?)";
+
     private static final String DELETE_FRIEND_QUERY = "DELETE FROM friendships WHERE user_id = ? AND friend_id = ?";
+
     private static final String FIND_FRIENDS_QUERY = "SELECT u.* FROM users u " +
             "INNER JOIN friendships f ON u.user_id = f.friend_id " +
             "WHERE f.user_id = ?";
+
     private static final String FIND_COMMON_FRIENDS_QUERY = "SELECT u.* FROM users u " +
             "INNER JOIN friendships f1 ON u.user_id = f1.friend_id " +
             "INNER JOIN friendships f2 ON u.user_id = f2.friend_id " +

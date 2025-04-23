@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.mappers.FilmMapper;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -37,6 +38,10 @@ public class FilmController {
     @PostMapping
     public ResponseEntity<FilmDto> create(@Valid @RequestBody FilmDto filmDto) {
         log.info("Запрос на создание фильма: {}", filmDto);
+
+        if(filmDto.getMpa() == null || filmDto.getMpa().getId() == null) {
+            throw new BadRequestException("Поле mpa_rating_id обязательно для заполнения");
+        }
 
         Film film = FilmMapper.mapToFilmModel(filmDto);
         Film createdFilm = filmService.createFilm(film);

@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.film.MpaRating;
+import ru.yandex.practicum.filmorate.model.mpa.MpaRating;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
 

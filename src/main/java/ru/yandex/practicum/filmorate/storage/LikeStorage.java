@@ -6,9 +6,9 @@ public interface LikeStorage {
 
     void addLike(Long filmId, Long userId);
 
-    void deleteLike(Long filmId, Long userId);
+    void removeLike(Long filmId, Long userId);
 
-    List<Long> findLikesByFilmId(Long filmId);
+    List<Long> findLikesByFilmId(Long id);
 
-    int countLikesByFilmId(Long filmId);
+    int countLikesByFilmId(Long id);
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.model.mpa.MpaRating;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.validators.ValidFilmReleaseDate;
 
 
@@ -17,7 +19,7 @@ public class Film {
     private Long id;
 
     @NotBlank(message = "Название фильма не может быть пустым.")
-    private String title;
+    private String name;
 
     @Size(max = 200, message = "Описание фильма не может превышать 200 символов.")
     private String description;
@@ -32,7 +34,7 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    private Set<Genre> genre = new HashSet<>();
+    private Set<Genre> genres = new HashSet<>();
 
     private MpaRating mpaRating;
 

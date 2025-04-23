@@ -11,8 +11,11 @@ import java.util.List;
 public class LikeDbStorage extends AbstractDbStorage<Long> implements LikeStorage {
 
     private static final String ADD_LIKE_QUERY = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
+
     private static final String DELETE_LIKE_QUERY = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
+
     private static final String FIND_LIKES_BY_FILM_QUERY = "SELECT user_id FROM likes WHERE film_id = ?";
+
     private static final String COUNT_LIKE_QUERY = "SELECT COUNT(user_id) FROM likes WHERE film_id = ?";
 
     public LikeDbStorage(JdbcTemplate jdbcTemplate) {
@@ -25,7 +28,7 @@ public class LikeDbStorage extends AbstractDbStorage<Long> implements LikeStorag
     }
 
     @Override
-    public void deleteLike(Long filmId, Long userId) {
+    public void removeLike(Long filmId, Long userId) {
         update(DELETE_LIKE_QUERY, filmId, userId);
     }
 

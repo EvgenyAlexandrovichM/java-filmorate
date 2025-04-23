@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,22 +17,44 @@ import java.util.Optional;
 @Qualifier("filmDbStorage")
 public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorage {
 
-    private static final String FIND_ALL_QUERY = "SELECT  * FROM films";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE film_id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT f.*, m.name AS mpa_name " +
+            "FROM films f " +
+            "JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id";
+
+    private static final String FIND_BY_ID_QUERY = "SELECT f.*, m.name AS mpa_name " +
+            "FROM films f " +
+            "JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id " +
+            "WHERE f.film_id = ?";
+
     private static final String INSERT_QUERY = "INSERT INTO films" +
-            "(title, description, release_date, duration, mpa_rating_id) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE films SET title = ?, description = ?, release_date = ?," +
+            "(name, description, release_date, duration, mpa_rating_id) VALUES (?, ?, ?, ?, ?)";
+
+    private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, release_date = ?," +
             "duration = ?, mpa_rating_id = ? WHERE film_id = ?";
+
     private static final String DELETE_QUERY = "DELETE FROM films WHERE film_id = ?";
-    private static final String FIND_POPULAR_FILMS_QUERY = "SELECT f.* COUNT(l.user_id) AS like_count" +
-            "FROM films f" +
-            "LEFT JOIN likes l ON f.film_id = l.film_id" +
-            "GROUP BY f.film_id" +
-            "ORDER BY like_count DESC" +
+
+    private static final String FIND_POPULAR_FILMS_QUERY = "SELECT f.*, m.name AS mpa_name, " +
+            "COUNT(l.user_id) AS like_count " +
+            "FROM films f " +
+            "JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id " +
+            "LEFT JOIN likes l ON f.film_id = l.film_id " +
+            "GROUP BY f.film_id, m.name " +
+            "ORDER BY like_count DESC, f.film_id ASC " +
             "LIMIT ?";
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, RowMapper<Film> mapper) {
-        super(jdbcTemplate, mapper);
+    private static final String INSERT_FILM_GENRES_QUERY = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
+
+    private static final String FIND_GENRES_BY_FILM_ID_QUERY = "SELECT g.genre_id, g.name " +
+            "FROM genres g " +
+            "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
+            "WHERE fg.film_id = ?";
+
+    private final RowMapper<Genre> genreRowMapper;
+
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, RowMapper<Film> filmRowMapper, RowMapper<Genre> genreRowMapper) {
+        super(jdbcTemplate, filmRowMapper);
+        this.genreRowMapper = genreRowMapper;
     }
 
     @Override
@@ -42,13 +66,20 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     public Film createFilm(Film film) {
         long filmId = insert(
                 INSERT_QUERY,
-                film.getTitle(),
+                film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getMpaRating().getMpaRatingId()
         );
         film.setId(filmId);
+
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            for (Genre genre : film.getGenres()) {
+                update(INSERT_FILM_GENRES_QUERY, filmId, genre.getId());
+            }
+        }
+
         return film;
     }
 
@@ -56,7 +87,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     public Film updateFilm(Film film) {
         update(
                 UPDATE_QUERY,
-                film.getTitle(),
+                film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
@@ -68,7 +99,15 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
 
     @Override
     public Optional<Film> findFilmById(Long id) {
-        return findOne(FIND_BY_ID_QUERY, id);
+        Optional<Film> optionalFilm = findOne(FIND_BY_ID_QUERY, id);
+        if (optionalFilm.isPresent()) {
+            Film film = optionalFilm.get();
+
+            List<Genre> genres = jdbcTemplate.query(FIND_GENRES_BY_FILM_ID_QUERY, genreRowMapper, id);
+            film.setGenres(new HashSet<>(genres));
+            return Optional.of(film);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -77,7 +116,7 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     }
 
     @Override
-    public void deleteFilm(Long id) {
+    public void removeFilm(Long id) {
         update(DELETE_QUERY, id);
     }
 }

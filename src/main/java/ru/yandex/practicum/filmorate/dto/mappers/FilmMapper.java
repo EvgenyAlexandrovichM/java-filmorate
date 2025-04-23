@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.dto.mappers;
 
 import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
+import ru.yandex.practicum.filmorate.dto.MpaRatingDto;
 import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.film.Genre;
-import ru.yandex.practicum.filmorate.model.film.MpaRating;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
+import ru.yandex.practicum.filmorate.model.mpa.MpaRating;
 
 import java.util.stream.Collectors;
 
@@ -12,15 +14,21 @@ public class FilmMapper {
     public static FilmDto mapToFilmDto(Film film) {
         FilmDto dto = new FilmDto();
         dto.setId(film.getId());
-        dto.setTitle(film.getTitle());
+        dto.setName(film.getName());
         dto.setDescription(film.getDescription());
         dto.setReleaseDate(film.getReleaseDate());
         dto.setDuration(film.getDuration());
-        dto.setGenreIds(film.getGenre()
+
+        if (film.getMpaRating() != null) {
+            MpaRatingDto mpa = new MpaRatingDto();
+            mpa.setId(film.getMpaRating().getMpaRatingId());
+            mpa.setName(film.getMpaRating().getName());
+            dto.setMpa(mpa);
+        }
+        dto.setGenres(film.getGenres()
                 .stream()
-                .map(Genre::getGenreId)
+                .map(genre -> new GenreDto(genre.getId(),genre.getName()))
                 .collect(Collectors.toSet()));
-        dto.setMpaRatingId(film.getMpaRating().getMpaRatingId());
         dto.setLikeUserIds(film.getLikes());
         return dto;
     }
@@ -28,22 +36,22 @@ public class FilmMapper {
     public static Film mapToFilmModel(FilmDto dto) {
         Film film = new Film();
         film.setId(dto.getId());
-        film.setTitle(dto.getTitle());
+        film.setName(dto.getName());
         film.setDescription(dto.getDescription());
         film.setReleaseDate(dto.getReleaseDate());
         film.setDuration(dto.getDuration());
-        film.setGenre(dto.getGenreIds()
+
+        if (dto.getMpa() != null) {
+            MpaRating mpaRating = new MpaRating();
+            mpaRating.setMpaRatingId(dto.getMpa().getId());
+            film.setMpaRating(mpaRating);
+        }
+        film.setGenres(dto.getGenres()
                 .stream()
-                .map(genreId -> {
-                    Genre genre = new Genre();
-                    genre.setGenreId(genreId);
-                    return genre;
-                })
+                .map(genreDto -> new Genre(genreDto.getId(), genreDto.getName()))
                 .collect(Collectors.toSet()));
-        MpaRating mpaRating = new MpaRating();
-        mpaRating.setMpaRatingId(dto.getMpaRatingId());
-        film.setMpaRating(mpaRating);
         film.setLikes(dto.getLikeUserIds());
+
         return film;
     }
 }

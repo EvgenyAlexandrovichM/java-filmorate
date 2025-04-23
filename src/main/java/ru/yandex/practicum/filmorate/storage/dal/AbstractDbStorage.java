@@ -63,6 +63,6 @@ public abstract class AbstractDbStorage<T> {
     //т.к. тесты в постмане требуют выдавать 200/204 ответ даже если нет друзей, метод update не подходит,
     // он выбрасывает исключение ошибки сервера, делаю такой костыль)
     protected void updateIgnoreResult(String query, Object... params) {
-        jdbcTemplate.update(query,params);
+        jdbcTemplate.update(query, params);
     }
 }

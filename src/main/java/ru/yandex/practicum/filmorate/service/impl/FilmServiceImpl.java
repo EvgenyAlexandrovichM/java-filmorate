@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
@@ -19,11 +22,17 @@ public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final MpaRatingStorage mpaRatingStorage;
+    private final GenreStorage genreStorage;
 
     public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage,
-                           @Qualifier("userDbStorage") UserStorage userStorage) {
+                           @Qualifier("userDbStorage") UserStorage userStorage,
+                           MpaRatingStorage mpaRatingStorage,
+                           GenreStorage genreStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.mpaRatingStorage = mpaRatingStorage;
+        this.genreStorage = genreStorage;
     }
 
     @Override
@@ -65,12 +74,14 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film createFilm(Film film) {
         log.info("Создание фильма: {}", film);
+        getFilmOrThrow(film);
         return filmStorage.createFilm(film);
     }
 
     @Override
     public Film updateFilm(Film film) {
         log.info("Обновление фильма: {}", film);
+        getFilmOrThrow(film);
         return filmStorage.updateFilm(film);
     }
 
@@ -88,6 +99,19 @@ public class FilmServiceImpl implements FilmService {
     private User getUserOrThrow(Long id) {
         return userStorage.findUserById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
+    }
+
+    private void getFilmOrThrow(Film film) {
+        if (mpaRatingStorage.findMpaRatingById(film.getMpaRating().getMpaRatingId()).isEmpty()) {
+            throw new NotFoundException("МРА рейтинг с id " + film.getMpaRating().getMpaRatingId() + " не найден.");
+        }
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            for (Genre genre : film.getGenres()) {
+                if (genreStorage.findGenreById(genre.getId()).isEmpty()) {
+                    throw new NotFoundException("Жанр с id " + genre.getId() + " не найден.");
+                }
+            }
+        }
     }
     //TODO Junit на логику
 }
