@@ -39,7 +39,7 @@ public class FilmController {
     public ResponseEntity<FilmDto> create(@Valid @RequestBody FilmDto filmDto) {
         log.info("Запрос на создание фильма: {}", filmDto);
 
-        if(filmDto.getMpa() == null || filmDto.getMpa().getId() == null) {
+        if (filmDto.getMpa() == null || filmDto.getMpa().getId() == null) {
             throw new BadRequestException("Поле mpa_rating_id обязательно для заполнения");
         }
 
