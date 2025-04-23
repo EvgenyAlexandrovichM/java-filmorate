@@ -35,5 +35,5 @@ public class FilmDto {
 
     private MpaRatingDto mpa;
 
-    private Set<Long> likeUserIds;
+    private Set<Long> likeUserIds = new HashSet<>();
 }

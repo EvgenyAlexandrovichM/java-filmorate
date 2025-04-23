@@ -101,7 +101,7 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
     }
 
-    private void getFilmOrThrow(Film film) {
+     private void getFilmOrThrow(Film film) {
         if (mpaRatingStorage.findMpaRatingById(film.getMpaRating().getMpaRatingId()).isEmpty()) {
             throw new NotFoundException("МРА рейтинг с id " + film.getMpaRating().getMpaRatingId() + " не найден.");
         }

@@ -39,12 +39,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFriends(Long id) {
         log.info("Получение списка друзей пользователя с id: {}", id);
-        User user = getUserOrThrow(id);
+        getUserOrThrow(id);
         List<User> friends = userStorage.findFriends(id);
         if (friends.isEmpty()) {
             log.info("У пользователя с id {} пока нет друзей", id);
         }
-        return userStorage.findFriends(id);
+        return friends;
     }
 
     @Override
