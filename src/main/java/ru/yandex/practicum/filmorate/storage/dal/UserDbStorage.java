@@ -62,6 +62,7 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     public User createUser(User user) {
         log.info("Создание пользователя: {}", user);
 
+        nameValidation(user);
         long id = insert(
                 INSERT_QUERY,
                 user.getEmail(),
@@ -80,6 +81,7 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
     public User updateUser(User user) {
         log.info("Обновление данных пользователя {}", user);
 
+        nameValidation(user);
         Optional<User> existingUser = findUserById(user.getId());
         if (existingUser.isEmpty()) {
             throw new NotFoundException("Пользователь с ID " + user.getId() + " не найден");
@@ -170,6 +172,14 @@ public class UserDbStorage extends AbstractDbStorage<User> implements UserStorag
         log.info("Получение списка друзей пользователя: {}", userId);
 
         return findMany(FIND_COMMON_FRIENDS_QUERY, userId, otherUserId);
+    }
+
+    private void nameValidation(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+
+            log.info("Имя пользователя установлено по умолчанию: {}", user.getName());
+        }
     }
 
     private User getUserOrThrow(Long id) {
