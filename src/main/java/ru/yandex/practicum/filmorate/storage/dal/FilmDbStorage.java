@@ -50,10 +50,6 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
             "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
             "WHERE fg.film_id = ?";
 
-    private static final String INSERT_LIKE_QUERY = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
-
-    private static final String DELETE_LIKE_QUERY = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
-
     private final RowMapper<Genre> genreRowMapper;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate, RowMapper<Film> filmRowMapper, RowMapper<Genre> genreRowMapper) {
@@ -122,15 +118,5 @@ public class FilmDbStorage extends AbstractDbStorage<Film> implements FilmStorag
     @Override
     public void removeFilm(Long id) {
         update(DELETE_FILM_QUERY, id);
-    }
-
-    @Override
-    public void addLike(Long filmId, Long userId) {
-        update(INSERT_LIKE_QUERY, filmId, userId);
-    }
-
-    @Override
-    public void deleteLike(Long filmId, Long userId) {
-        update(DELETE_LIKE_QUERY, filmId, userId);
     }
 }

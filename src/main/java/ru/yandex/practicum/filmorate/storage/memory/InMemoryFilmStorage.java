@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.film.Film;
-import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -76,30 +75,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Фильм с ID {} удален", id);
     }
 
-    @Override
-    public void addLike(Long filmId, Long userId) {
-        log.info("Добавление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-
-        Film film = getFilmOrThrow(filmId);
-        User user = getUserOrThrow(userId);
-
-        film.getLikes().add(userId);
-        updateFilm(film);
-        log.info("Пользователь {} поставил лайк фильму {}", user, film);
-    }
-
-    @Override
-    public void deleteLike(Long filmId, Long userId) {
-        log.info("Удаление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-
-        Film film = getFilmOrThrow(filmId);
-        User user = getUserOrThrow(userId);
-
-        film.getLikes().remove(userId);
-        updateFilm(film);
-        log.info("Пользователь {} удалил лайк фильму {}", user, film);
-    }
-
     private long getNextId() {
         long currentMaxId = films.keySet()
                 .stream()
@@ -107,15 +82,5 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
-    }
-
-    private Film getFilmOrThrow(Long id) {
-        return findFilmById(id)
-                .orElseThrow(() -> new NotFoundException("Фильм с id " + id + " не найден."));
-    }
-
-    private User getUserOrThrow(Long id) {
-        return userStorage.findUserById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
     }
 }

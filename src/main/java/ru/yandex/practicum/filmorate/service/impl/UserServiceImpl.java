@@ -39,7 +39,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFriends(Long id) {
         log.info("Получение списка друзей пользователя с id: {}", id);
-        getUserOrThrow(id);
+        userStorage.findUserById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
         List<User> friends = userStorage.findFriends(id);
         if (friends.isEmpty()) {
             log.info("У пользователя с id {} пока нет друзей", id);
@@ -85,12 +86,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserById(Long id) {
         log.info("Получение пользователя по id: {}", id);
         return userStorage.findUserById(id);
-    }
-
-    private User getUserOrThrow(Long id) {
-        log.info("Поиск пользователя с id: {}", id);
-        return userStorage.findUserById(id)
-                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + id + " не найден."));
     }
     //TODO Junit на логику
 }

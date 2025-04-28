@@ -9,10 +9,11 @@ import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.MpaRatingStorage;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,39 +22,43 @@ public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
     private final MpaRatingStorage mpaRatingStorage;
     private final GenreStorage genreStorage;
+    private final LikeStorage likeStorage;
 
     public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                            MpaRatingStorage mpaRatingStorage,
-                           GenreStorage genreStorage) {
+                           GenreStorage genreStorage, LikeStorage likeStorage) {
         this.filmStorage = filmStorage;
         this.mpaRatingStorage = mpaRatingStorage;
         this.genreStorage = genreStorage;
+        this.likeStorage = likeStorage;
     }
 
     @Override
     public void addLike(Long filmId, Long userId) {
         log.info("Добавление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-        filmStorage.addLike(filmId, userId);
+        likeStorage.addLike(filmId, userId);
         log.info("Пользователь c id {} поставил лайк фильму c id {}", userId, filmId);
     }
 
     @Override
     public void deleteLike(Long filmId, Long userId) {
         log.info("Удаление лайка фильму с id {} от пользователя с id {}", filmId, userId);
-        filmStorage.deleteLike(filmId, userId);
+        likeStorage.deleteLike(filmId, userId);
         log.info("Пользователь с id {} удалил лайк с id фильму {}", userId, filmId);
     }
 
     @Override
     public List<Film> getPopularFilms(int count) {
         log.info("Получение топ {} популярных фильмов по количеству лайков.", count);
-        return filmStorage.findPopularFilms(count);
+        List<Film> films = filmStorage.findPopularFilms(count);
+        return enrichFilmsWithGenresAndLikes(films);
     }
 
     @Override
     public List<Film> getAll() {
         log.info("Получение всех фильмов");
-        return filmStorage.findAllFilms();
+        List<Film> films = filmStorage.findAllFilms();
+        return enrichFilmsWithGenresAndLikes(films);
     }
 
     @Override
@@ -74,6 +79,18 @@ public class FilmServiceImpl implements FilmService {
     public Optional<Film> getFilmById(Long id) {
         log.info("Получение фильма по id: {}", id);
         return filmStorage.findFilmById(id);
+    }
+
+    private List<Film> enrichFilmsWithGenresAndLikes(List<Film> films) {
+        Map<Long, Set<Genre>> filmGenres = genreStorage.findAllFilmGenres();
+        Map<Long, Set<Long>> filmLikes = likeStorage.findAllFilmLikes();
+
+        return films.stream()
+                .peek(film -> {
+                    film.setGenres(filmGenres.getOrDefault(film.getId(), new HashSet<>()));
+                    film.setLikes(filmLikes.getOrDefault(film.getId(), new HashSet<>()));
+                })
+                .collect(Collectors.toList());
     }
 
     private void getFilmOrThrow(Film film) {

@@ -33,6 +33,13 @@ public abstract class AbstractDbStorage<T> {
         return jdbcTemplate.query(query, mapper, params);
     }
 
+    // перегруженный метод, который позволяет задать свой RowMapper для произвольного типа.
+    // используется, когда результат запроса не должен быть преобразован стандартным маппером
+    // костыль для LikeDbStorage и GenreDbStorage
+    protected <R> List<R> findMany(String query, RowMapper<R> mapper, Object... params) {
+        return jdbcTemplate.query(query, mapper, params);
+    }
+
     protected void update(String query, Object... params) {
         log.info("Выполнение запроса: {}, параметры: {}", query, Arrays.toString(params));
         int rowsUpdated = jdbcTemplate.update(query, params);
