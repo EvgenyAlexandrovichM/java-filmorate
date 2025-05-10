@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ public interface FilmService {
 
     List<Film> getPopularFilms(int count);
 
-    List<Film> getAllFilms();
+    List<Film> getAll();
 
     Film createFilm(Film film);
 

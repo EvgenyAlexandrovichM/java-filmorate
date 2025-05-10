@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface FilmStorage {
 
-    List<Film> findAll();
+    List<Film> findAllFilms();
 
     Film createFilm(Film film);
 
@@ -16,4 +16,7 @@ public interface FilmStorage {
     Optional<Film> findFilmById(Long id);
 
     List<Film> findPopularFilms(int count);
+
+    void removeFilm(Long id);
+
 }
